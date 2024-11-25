@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport" content="width=device-width, initial-scale=1.0">
+    <title>BALL KNOWLEDGE</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boostrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>BALL KNOWLEDGE</h1>
+        <h2>The NBA Wizard</h2>
+        <input id="playerName" type="text" class="form-control" placeholder="Enter player name" />
+        <button class="btn btn-primary mt-3" onclick="searchPlayer()">Search</button>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody id="results">
+            </tbody>
+        </table>
+    </div>
+    <script>
+        async function searchPlayer() {
+            const playerName = document.getElementById('playerName').value;
+            const response = await fetch(`http://localhost:3000/players?name=${playerName}`);
+            const players = await response.json();
+
+            console.log(players);
+
+            const results = document.getElementById('results');
+            results.innerHTML = players.map(player => `
+                <tr>
+                    <td>${player.player_name}</td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
