@@ -27,8 +27,9 @@ db.connect((err) => {
 // API routes to get player data
 app.get('/players', (req, res) => {
     const name = req.query.name || '';
-    const query = `SELECT * FROM players WHERE player_name LIKE ?`;
-
+    const query = `SELECT * FROM players JOIN player_stats on players.player_id = player_stats.player_id WHERE player_name LIKE ?`;
+//SELECT * FROM players JOIN player_stats on players.player_id = player_stats.player_id;
+//SELECT * FROM players WHERE player_name LIKE ? 
     console.log(`Query: ${query}, Parameter: %${name}%`); // Log query and parameter
 
     db.query(query, [`%${name}%`], (err, results) => {
