@@ -12,7 +12,7 @@ app.use(express.json()); // parse json request bodies
 const db = mysql.createConnection({
     host:'localhost',
     user:'root',
-    password:'', //change this to your password
+    password:'C0mplicated_122305', //change this to your password
     database: 'nba_players'
 });
 
