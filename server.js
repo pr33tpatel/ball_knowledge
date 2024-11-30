@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+require('dotenv').config();
 const { resourceLimits } = require('worker_threads');
 
 const app = express();
@@ -10,10 +11,10 @@ app.use(cors()); // allow request from the website
 app.use(express.json()); // parse json request bodies
 
 const db = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'', //change this to your password
-    database: 'nba_players'
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD, //change this to your password
+    database: process.env.DB_NAME
 });
 
 db.connect((err) => {
