@@ -99,11 +99,18 @@
             <!-- Player Insert -->
 
             <div class="mt-4">
-                <h3>Insert a New Player</h3>
+                <h3 class="text-center">Insert a New Player</h3>
                 <input id="newPlayerId" type="number" class="form-control" placeholder="Enter a player id" />
                 <input id="newPlayerName" type="text" class="form-control" placeholder="Enter a player name" />
                 <button class="btn btn-success mt-3 w-100" onclick="addPlayer()">Insert Player</button>
              </div>
+
+             <!-- Delete Player -->
+                <h3 class="text-center">Delete a Player</h3>
+                <input id="deletePlayerId" type="number" class="form-control" placeholder="Enter player_id to Delete" />
+                <button class="btn btn-danger mt-3 w-100" onclick="deletePlayer()">Delete Player</button>
+                <div id="deleteMessage" class="mt-3 text-center"></div>
+
         </div>
     </div>
 </body>
@@ -206,6 +213,37 @@
         alert('An error occurred while adding the player.');
     }
 }
+     </script>
+
+     <script>
+    async function deletePlayer() {
+        const playerId = document.getElementById('deletePlayerId').value.trim();
+        
+        if (!playerId) {
+            document.getElementById('deleteMessage').innerText = "Player ID is required.";
+            document.getElementById('deleteMessage').classList.add('text-danger');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:3000/players/${playerId}`, {
+                method: 'DELETE',
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById('deleteMessage').innerText = data.message || "Player deleted successfully.";
+                document.getElementById('deleteMessage').classList.remove('text-danger');
+                document.getElementById('deleteMessage').classList.add('text-success');
+            } else {
+                throw new Error(data.error || "An error occurred while deleting the player.");
+            }
+        } catch (error) {
+            document.getElementById('deleteMessage').innerText = error.message;
+            document.getElementById('deleteMessage').classList.add('text-danger');
+        }
+    }
 
      </script>
 </body>

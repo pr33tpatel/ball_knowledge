@@ -122,7 +122,40 @@ app.post('/players', (req, res) => {
     });
 });
 
-  
+app.delete('/players/:player_id', (req,res) => {
+    const {player_id} = req.params;
+
+    if (!player_id || !Number.isInteger(parseInt(player_id,10))) {
+        return res.status(400).send({ error: 'player_id is required and must be an integer' });
+    }
+    
+    const deletePlayerStatsQuery = `DELETE FROM player_stats WHERE player_id = ?`;
+
+    const deletePlayerQuery = `DELETE FROM players WHERE player_id = ?`;
+
+    db.query(deletePlayerStatsQuery, [player_id], (err, results) => {
+        if (err) {
+            console.error('Error deleting from player_stats table: ', err);
+            return res.status(500).send({ error: 'Delete from player_stats failed', details: err.message});
+        }
+
+        console.log('Deleted from player_stats table:', results);
+
+        db.query(deletePlayerQuery, [player_id], (err, results) => {
+            if (err) {
+                console.error('Error deleting from players table: ', err);
+                return res.status(500).send({ error: 'Delete from players failed', details: err.message});
+            }
+
+            console.log('Deleted from players table:', results);
+
+            res.status(200).send({
+                message: 'Deleted successfully from players and player_stats',
+                player_id: player_id,
+            });
+        });
+    });
+});
 
 // start the server
 app.listen(PORT, () => {
