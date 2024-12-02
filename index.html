@@ -39,7 +39,44 @@
             <!-- Team Search -->
             <div class="col-md-6">
                 <h3>Team Search</h3>
-                <input id="teamName" type="text" class="form-control" placeholder="Enter Team Name" />
+                
+                <input id="teamAbbreviation" type="text" class="form-control" placeholder="Enter Team Name" />
+                <!-- Season Select Dropdown -->
+                <select id="season_id" class="form-control mt-3">
+                    <option value ="">Select Season</option>
+                    <option value ="2022-23">2022-23</option>
+                    <option value ="2021-22">2021-22</option>
+                    <option value ="2020-21">2020-21</option>
+                    <option value ="2019-20">2019-20</option>
+                    <option value ="2018-19">2018-19</option>
+                    <option value ="2017-18">2017-18</option>
+                    <option value ="2016-17">2016-17</option>
+                    <option value ="2015-16">2015-16</option>
+                    <option value ="2014-15">2014-15</option>
+                    <option value ="2013-14">2013-14</option>
+                    <option value ="2012-13">2012-13</option>
+                    <option value ="2011-12">2011-12</option>
+                    <option value ="2010-11">2010-11</option>
+                    <option value ="2009-10">2009-10</option>
+                    <option value ="2009-10">2009-10</option>
+                    <option value ="2008-09">2008-09</option>
+                    <option value ="2007-08">2007-08</option>
+                    <option value ="2006-07">2006-07</option>
+                    <option value ="2005-06">2005-06</option>
+                    <option value ="2004-05">2004-05</option>
+                    <option value ="2003-04">2003-04</option>
+                    <option value ="2002-03">2002-03</option>
+                    <option value ="2001-02">2001-02</option>
+                    <option value ="2000-01">2000-01</option>
+                    <option value ="1999-00">1999-00</option>
+                    <option value ="1998-99">1998-99</option>
+                    <option value ="1997-98">1997-98</option>
+                    <option value ="1996-97">1996-97</option>
+                    <option value ="1995-96">1995-96</option>
+                    <option value ="1994-95">1994-95</option>
+                    <option value ="1993-94">1993-94</option>
+                    <option value ="1992-93">1992-93</option>
+                </select>
                 <button class="btn btn-primary mt-3 w-100" onclick="searchTeam()">Search Team</button>
                 <div class="table-responsive mt-3">
                     <table class="table table-striped">
@@ -61,61 +98,6 @@
     </div>
 </body>
 
-
-
-<!-- OLD BODY SECTION - ->
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center">BALL KNOWLEDGE</h1>
-        <h2 class="text-center">The NBA Wizard</h2>
-        <!- - Search Section - ->
-         <div class="row mt-4">
-            <!- - Player Search- ->
-             <div class="col-md-6">
-                <div class="search-section p-3">
-                    <h3>Player Search</h3>
-                    <input id="playerName" type="text" class="form-control" placeholder="Enter Player Name" />
-                    <button class="btn btn-primary mt-3 w-100" onclick="searchPlayer()">Search Player</button>
-                    <table class="table mt-3">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Team</th>
-                                <th>Points</th>
-                                <th>Rebounds</th>
-                                <th>Assists</th>
-                                <th>Games</th>
-                                <th>Season</th>
-                            </tr>
-                        </thead>
-                        <tbody id="results">
-                        </tbody>
-                    </table>
-                </div>
-             </div>
-         </div>
-         <!- - Team Search - ->
-          <div class ="col-md-6">
-            <div class="search-section p-3">
-                <h3>Team Search</h3>
-                <input id="teamName" type="text" class="form-control" placeholder="Enter Team Name" />
-                <button class="btn btn-primary mt-3 w-100" onclick="searchTeam()">Search Team</button>
-                <table class="table mt-3 table-striped">
-                    <thead>
-                        <tr>
-                            <th>Players</th>
-                            <th>Games</th>
-                            <th>Points</th>
-                            <th>Rebounds</th>
-                            <th>Assists</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teamResults"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
--->
     <script>
         async function searchPlayer() {
             const playerName = document.getElementById('playerName').value;
@@ -138,5 +120,43 @@
             `).join('');
         }
     </script>
+
+    <!-- Team Search Function -->
+     <script>
+        async function searchTeam() {
+    const teamAbbreviation = document.getElementById('teamAbbreviation').value.trim();
+    const seasonId = document.getElementById('season_id').value.trim();
+
+    // Construct URL with proper template literals
+    let url = `http://localhost:3000/teams?name=${teamAbbreviation}`;
+    if (seasonId) {
+        url += `&season=${seasonId}`;
+    }
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error, Status: ${response.status}`);
+        }
+        const teams = await response.json();
+
+        console.log(teams);
+
+        const teamResults = document.getElementById('teamResults');
+        teamResults.innerHTML = teams.map(team => `
+            <tr>
+                <td>${team.player_name}</td>
+                <td>${team.gp}</td>
+                <td>${team.pts}</td>
+                <td>${team.reb}</td>
+                <td>${team.ast}</td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error fetching team data:', error);
+    }
+}
+
+     </script>
 </body>
 </html>

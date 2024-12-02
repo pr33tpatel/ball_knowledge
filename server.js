@@ -17,6 +17,7 @@ const db = mysql.createConnection({
     database: process.env.DB_NAME
 });
 
+
 db.connect((err) => {
     if (err) {
         console.error('Database connection error:', err);
@@ -38,6 +39,41 @@ app.get('/players', (req, res) => {
             console.error('Database query error:', err); // Log error details
             return res.status(500).send({ error: 'Database query failed', details: err.message });
         }
+        res.send(results);
+    });
+});
+
+// API routes to get team data
+app.get('/teams', (req, res) => {
+    const team_abbreviation = req.query.name || '';
+    const season_id = req.query.season || '';
+
+    let query = `
+        SELECT 
+            P.player_name, 
+            T.team_abbreviation, 
+            PS.pts, 
+            PS.reb, 
+            PS.ast, 
+            PS.gp, 
+            P.season_id
+        FROM players P
+        JOIN player_stats PS ON P.player_id = PS.player_id
+        JOIN teams T ON P.team_abbreviation = T.team_abbreviation
+        WHERE T.team_abbreviation = ? 
+        ${season_id ? 'AND P.season_id = ?' : ''};
+    `;
+
+    console.log(`Query: ${query}`);
+    const params = [team_abbreviation];
+    if (season_id) params.push(season_id);
+
+    db.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Database query error:', err);
+            return res.status(500).send({ error: 'Database query failed', details: err.message });
+        }
+
         res.send(results);
     });
 });
