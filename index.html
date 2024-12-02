@@ -36,11 +36,13 @@
                     </table>
                 </div>
             </div>
+
+
             <!-- Team Search -->
             <div class="col-md-6">
                 <h3>Team Search</h3>
                 
-                <input id="teamAbbreviation" type="text" class="form-control" placeholder="Enter Team Name" />
+                <input id="teamAbbreviation" type="text" class="form-control" placeholder="Enter Team Name (Ex. LAL, MIA, NYK)" />
                 <!-- Season Select Dropdown -->
                 <select id="season_id" class="form-control mt-3">
                     <option value ="">Select Season</option>
@@ -57,7 +59,6 @@
                     <option value ="2012-13">2012-13</option>
                     <option value ="2011-12">2011-12</option>
                     <option value ="2010-11">2010-11</option>
-                    <option value ="2009-10">2009-10</option>
                     <option value ="2009-10">2009-10</option>
                     <option value ="2008-09">2008-09</option>
                     <option value ="2007-08">2007-08</option>
@@ -94,6 +95,15 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Player Insert -->
+
+            <div class="mt-4">
+                <h3>Insert a New Player</h3>
+                <input id="newPlayerId" type="number" class="form-control" placeholder="Enter a player id" />
+                <input id="newPlayerName" type="text" class="form-control" placeholder="Enter a player name" />
+                <button class="btn btn-success mt-3 w-100" onclick="addPlayer()">Insert Player</button>
+             </div>
         </div>
     </div>
 </body>
@@ -154,6 +164,46 @@
         `).join('');
     } catch (error) {
         console.error('Error fetching team data:', error);
+    }
+}
+
+     </script>
+
+     <script>
+        async function addPlayer() {
+    const newPlayerId = parseInt(document.getElementById('newPlayerId').value.trim(), 10);
+    const newPlayerName = document.getElementById('newPlayerName').value.trim();
+
+    if (!newPlayerId || isNaN(newPlayerId)) {
+        alert('Player id is required and must be integer');
+        return;
+    }
+    
+    if (!newPlayerName) {
+        alert('Player name is required.');
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/players', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ player_id: newPlayerId, player_name: newPlayerName }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to add player');
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        
+        document.getElementById('newPlayerId').value = '';
+        document.getElementById('newPlayerName').value = ''; // Clear the input field
+    } catch (error) {
+        console.error('Error adding player:', error);
+        alert('An error occurred while adding the player.');
     }
 }
 

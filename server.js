@@ -78,9 +78,53 @@ app.get('/teams', (req, res) => {
     });
 });
 
+
+app.post('/players', (req, res) => {
+    const { player_id, player_name } = req.body;
+
+    // Input validation
+    if (!player_id || !Number.isInteger(player_id)) {
+        return res.status(400).send({ error: 'player_id is required and must be an integer' });
+    }
+    if (!player_name || player_name.trim() === '') {
+        return res.status(400).send({ error: 'player_name is required' });
+    }
+
+    // Query to insert into `players` table
+    const insertPlayerQuery = `INSERT INTO players (player_id, player_name) VALUES (?, ?)`;
+
+    // Query to insert into `player_stats` table
+    const insertPlayerStatsQuery = `INSERT INTO player_stats (player_id) VALUES (?)`;
+
+    // Execute the `players` insertion query
+    db.query(insertPlayerQuery, [player_id, player_name], (err, results) => {
+        if (err) {
+            console.error('Error inserting into players table:', err);
+            return res.status(500).send({ error: 'Failed to insert into players table', details: err.message });
+        }
+
+        console.log('Inserted into players table:', results);
+
+        // Execute the `player_stats` insertion query
+        db.query(insertPlayerStatsQuery, [player_id], (err, results) => {
+            if (err) {
+                console.error('Error inserting into player_stats table:', err);
+                return res.status(500).send({ error: 'Failed to insert into player_stats table', details: err.message });
+            }
+
+            console.log('Inserted into player_stats table:', results);
+
+            res.status(201).send({
+                message: 'Player and stats added successfully',
+                player_id: player_id,
+            });
+        });
+    });
+});
+
   
 
 // start the server
 app.listen(PORT, () => {
-    console.log('Server is running on https://localhost:${PORT}');
+    console.log('Server is running on http://localhost:${PORT}');
 });
